@@ -40,13 +40,15 @@ namespace cartographer {
 namespace mapping_3d {
 
 SparsePoseGraph::SparsePoseGraph(
-    const mapping::proto::SparsePoseGraphOptions& options,
-    common::ThreadPool* thread_pool,
-    std::deque<mapping::TrajectoryNode::ConstantData>* constant_node_data)
+    const mapping::proto::SparsePoseGraphOptions &options,
+    common::ThreadPool *thread_pool,
+    std::deque<mapping::TrajectoryNode::ConstantData> *constant_node_data)
     : options_(options),
       optimization_problem_(options_.optimization_problem_options()),
       constraint_builder_(options_.constraint_builder_options(), thread_pool),
-      constant_node_data_(constant_node_data) {}
+      constant_node_data_(constant_node_data) {
+  //LOG(INFO) << "@@@ SparsePoseGraph::SparsePoseGraph constructed";
+}
 
 SparsePoseGraph::~SparsePoseGraph() {
   WaitForAllComputations();
@@ -90,6 +92,10 @@ int SparsePoseGraph::AddScan(
     const std::vector<const Submap*>& insertion_submaps) {
   const transform::Rigid3d optimized_pose(GetLocalToGlobalTransform(*submaps) *
                                           pose);
+
+  //LOG(INFO) << "@@@ SparsePoseGraph::AddScan called";
+  LOG(INFO) << "$$$ current connected_components_.size() = "
+            << connected_components_.size();
 
   common::MutexLocker locker(&mutex_);
   const int j = trajectory_nodes_.size();
@@ -170,6 +176,7 @@ void SparsePoseGraph::ComputeConstraintsForScan(
     std::vector<const Submap*> insertion_submaps, const Submap* finished_submap,
     const transform::Rigid3d& pose,
     const kalman_filter::PoseCovariance& covariance) {
+  //LOG(INFO) << "@@@ SparsePoseGraph::ComputeConstraintsForScan";
   GrowSubmapTransformsAsNeeded(insertion_submaps);
   const int matching_index = GetSubmapIndex(matching_submap);
   const transform::Rigid3d optimized_pose =
@@ -197,6 +204,9 @@ void SparsePoseGraph::ComputeConstraintsForScan(
   // Determine if this scan should be globally localized.
   const bool run_global_localization =
       global_localization_samplers_[scan_trajectory]->Pulse();
+  if(run_global_localization){
+    LOG(INFO) << "$$$ this scan should be globally localized";
+  }
 
   CHECK_LT(submap_states_.size(), std::numeric_limits<int>::max());
   const int num_submaps = submap_states_.size();
@@ -210,7 +220,7 @@ void SparsePoseGraph::ComputeConstraintsForScan(
 
       // Only globally match against submaps not in this trajectory.
       if (run_global_localization && scan_trajectory != submap_trajectory) {
-        constraint_builder_.MaybeAddGlobalConstraint(
+        constraint_builder_.MaybeAddGlobalConstraint( /// NEVER CALLED, because scan_trajectory == submap_trajectory always hold true
             submap_index, submap_states_[submap_index].submap, scan_index,
             scan_trajectory, submap_trajectory, &trajectory_connectivity_,
             trajectory_nodes_);
@@ -314,6 +324,9 @@ void SparsePoseGraph::RunFinalOptimization() {
 }
 
 void SparsePoseGraph::RunOptimization() {
+  LOG(INFO) << "$$$ SparsePoseGraph::RunOptimization called with "
+               "submap_transforms_.size() = "
+            << submap_transforms_.size();
   if (!submap_transforms_.empty()) {
     transform::Rigid3d submap_0_pose;
     std::vector<const mapping::Submaps*> trajectories;
@@ -357,6 +370,7 @@ void SparsePoseGraph::RunOptimization() {
     }
     optimized_submap_transforms_ = submap_transforms_;
     connected_components_ = trajectory_connectivity_.ConnectedComponents();
+    //LOG(INFO) << "$$$ connected_components_.size() = " << connected_components_.size();
     reverse_connected_components_.clear();
     for (size_t i = 0; i != connected_components_.size(); ++i) {
       for (const auto* trajectory : connected_components_[i]) {

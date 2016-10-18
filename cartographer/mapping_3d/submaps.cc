@@ -278,6 +278,7 @@ void Submaps::InsertLaserFan(const sensor::LaserFan3D& laser_fan) {
     submap->end_laser_fan_index = num_laser_fans_;
   }
   ++num_laser_fans_in_last_submap_;
+  LOG(INFO) << "num_laser_fans = " << options_.num_laser_fans(); ///
   if (num_laser_fans_in_last_submap_ == options_.num_laser_fans()) {
     AddSubmap(laser_fan.origin);
   }

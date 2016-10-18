@@ -80,7 +80,12 @@ class Submaps : public mapping::Submaps {
   // Adds a node to be used when visualizing the submap.
   void AddTrajectoryNodeIndex(int trajectory_node_index);
 
- private:
+  ///
+  const std::vector<Eigen::Array4i> & voxel_indices_and_probabilities() const {
+    return voxel_indices_and_probabilities_;
+  }
+
+private:
   struct PixelData {
     int min_z = INT_MAX;
     int max_z = INT_MIN;

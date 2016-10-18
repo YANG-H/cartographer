@@ -117,6 +117,7 @@ bool FastCorrelativeScanMatcher::Match(
   CHECK_NOTNULL(score);
   CHECK_NOTNULL(pose_estimate);
 
+  /// iterate different angles to find rotated scans whose matching scores are not too low
   const std::vector<DiscreteScan> discrete_scans =
       GenerateDiscreteScans(coarse_point_cloud, fine_point_cloud,
                             initial_pose_estimate.cast<float>());
@@ -124,6 +125,7 @@ bool FastCorrelativeScanMatcher::Match(
   const std::vector<Candidate> lowest_resolution_candidates =
       ComputeLowestResolutionCandidates(discrete_scans);
 
+  LOG(INFO) << "@@@FastCorrelativeScanMatcher::BranchAndBound";
   const Candidate best_candidate =
       BranchAndBound(discrete_scans, lowest_resolution_candidates,
                      precomputation_grid_stack_->max_depth(), min_score);

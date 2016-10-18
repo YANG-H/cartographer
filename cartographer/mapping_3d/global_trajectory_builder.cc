@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+#include <fstream>
+
 #include "cartographer/mapping_3d/global_trajectory_builder.h"
 
 #include "cartographer/mapping_3d/local_trajectory_builder.h"
@@ -51,6 +53,20 @@ void GlobalTrajectoryBuilder::AddImuData(
 
 void GlobalTrajectoryBuilder::AddLaserFan3D(
     const common::Time time, const sensor::LaserFan3D& laser_fan) {
+  
+  static bool first_time = true;
+  if(first_time){
+    std::ofstream ofs("/home/i-yanghao/cartographer_first_scan.xyz");
+    if(ofs){
+      for(auto & p : laser_fan.returns){
+        ofs << p[0] << " " << p[1] << " " << p[2] << std::endl;
+      }
+    }else{
+      LOG(INFO) << "failed to open /home/i-yanghao/cartographer_first_scan.xyz";
+    }
+    first_time = false;
+  }
+
   auto insertion_result =
       local_trajectory_builder_->AddLaserFan3D(time, laser_fan);
 

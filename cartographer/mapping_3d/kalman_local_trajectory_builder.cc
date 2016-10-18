@@ -81,6 +81,11 @@ KalmanLocalTrajectoryBuilder::AddLaserFan3D(
     return nullptr;
   }
 
+  LOG(INFO) << "!!There are " << laser_fan.returns.size() << " returns and "
+            << laser_fan.misses.size()
+            << " misses in this LaserFan! reported by "
+               "KalmanLocalTrajectoryBuilder::AddLaserFan3D()";
+
   transform::Rigid3d pose_prediction;
   kalman_filter::PoseCovariance unused_covariance_prediction;
   pose_tracker_->GetPoseEstimateMeanAndCovariance(
@@ -114,6 +119,9 @@ KalmanLocalTrajectoryBuilder::AddLaserFan3D(
     }
   }
   ++num_accumulated_;
+
+  /// LOG(INFO) << "options_.scans_per_accumulation() = " <<
+  // options_.scans_per_accumulation();
 
   if (num_accumulated_ >= options_.scans_per_accumulation()) {
     num_accumulated_ = 0;
@@ -222,9 +230,9 @@ KalmanLocalTrajectoryBuilder::InsertIntoSubmap(
     return nullptr;
   }
   const Submap* const matching_submap =
-      submaps_->Get(submaps_->matching_index());
-  std::vector<const Submap*> insertion_submaps;
-  for (int insertion_index : submaps_->insertion_indices()) {
+      submaps_->Get(submaps_->matching_index()); // the second-from-end submap, or the last submap when #of submaps=1
+  std::vector<const Submap*> insertion_submaps; 
+  for (int insertion_index : submaps_->insertion_indices()) { // the last two submaps, or the last submap
     insertion_submaps.push_back(submaps_->Get(insertion_index));
   }
   submaps_->InsertLaserFan(sensor::TransformLaserFan3D(
