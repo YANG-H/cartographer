@@ -94,8 +94,8 @@ int SparsePoseGraph::AddScan(
                                           pose);
 
   //LOG(INFO) << "@@@ SparsePoseGraph::AddScan called";
-  LOG(INFO) << "$$$ current connected_components_.size() = "
-            << connected_components_.size();
+  // LOG(INFO) << "$$$ current connected_components_.size() = "
+  //           << connected_components_.size();
 
   common::MutexLocker locker(&mutex_);
   const int j = trajectory_nodes_.size();
@@ -325,8 +325,8 @@ void SparsePoseGraph::RunFinalOptimization() {
 
 void SparsePoseGraph::RunOptimization() {
   LOG(INFO) << "$$$ SparsePoseGraph::RunOptimization called with "
-               "submap_transforms_.size() = "
-            << submap_transforms_.size();
+               "constraints_.size() = "
+            << constraints_.size();
   if (!submap_transforms_.empty()) {
     transform::Rigid3d submap_0_pose;
     std::vector<const mapping::Submaps*> trajectories;

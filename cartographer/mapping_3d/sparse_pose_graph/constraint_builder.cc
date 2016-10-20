@@ -99,8 +99,8 @@ void ConstraintBuilder::MaybeAddConstraint(
     ScheduleSubmapScanMatcherConstructionAndQueueWorkItem(
         submap_index, submap_nodes, &submap->high_resolution_hybrid_grid,
         [=]() EXCLUDES(mutex_) {
-          LOG(INFO) << "@@@ ConstraintBuilder::ComputeConstraint sheduled by "
-                     "MaybeAddConstraint"; ///
+          // LOG(INFO) << "@@@ ConstraintBuilder::ComputeConstraint sheduled by "
+          //            "MaybeAddConstraint"; ///
           ComputeConstraint(submap_index, submap, scan_index,
                             nullptr, /* scan_trajectory */
                             nullptr, /* submap_trajectory */
@@ -118,7 +118,7 @@ void ConstraintBuilder::MaybeAddGlobalConstraint(
     const mapping::Submaps* submap_trajectory,
     mapping::TrajectoryConnectivity* trajectory_connectivity,
     const std::vector<mapping::TrajectoryNode>& trajectory_nodes) { /// NEVER CALLED, WHY?!
-  LOG(INFO) << "@@@ ConstraintBuilder::MaybeAddGlobalConstraint called"; ///
+  // LOG(INFO) << "@@@ ConstraintBuilder::MaybeAddGlobalConstraint called"; ///
   const auto submap_nodes = ComputeSubmapNodes(
       trajectory_nodes, submap, scan_index, transform::Rigid3d::Identity());
   common::MutexLocker locker(&mutex_);
@@ -132,8 +132,8 @@ void ConstraintBuilder::MaybeAddGlobalConstraint(
   ScheduleSubmapScanMatcherConstructionAndQueueWorkItem(
       submap_index, submap_nodes, &submap->high_resolution_hybrid_grid,
       [=]() EXCLUDES(mutex_) {
-        LOG(INFO) << "@@@ ConstraintBuilder::ComputeConstraint sheduled by "
-                     "MaybeAddGlobalConstraint"; ///
+        // LOG(INFO) << "@@@ ConstraintBuilder::ComputeConstraint sheduled by "
+        //              "MaybeAddGlobalConstraint"; ///
         ComputeConstraint(submap_index, submap, scan_index, submap_trajectory,
                           scan_trajectory, true, /* match_full_submap */
                           trajectory_connectivity, point_cloud,
@@ -234,7 +234,7 @@ void ConstraintBuilder::ComputeConstraint(
           &score, &pose_estimate)) {
     return;
   }
-  LOG(INFO) << "$$$FastCorrelativeScanMatcher::Match succeeded!!!";
+  // LOG(INFO) << "$$$FastCorrelativeScanMatcher::Match succeeded!!!";
 
   // We've reported a successful local match.
   CHECK_GT(score, options_.min_score());

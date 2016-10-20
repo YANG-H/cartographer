@@ -81,10 +81,10 @@ KalmanLocalTrajectoryBuilder::AddLaserFan3D(
     return nullptr;
   }
 
-  LOG(INFO) << "!!There are " << laser_fan.returns.size() << " returns and "
-            << laser_fan.misses.size()
-            << " misses in this LaserFan! reported by "
-               "KalmanLocalTrajectoryBuilder::AddLaserFan3D()";
+  // LOG(INFO) << "!!There are " << laser_fan.returns.size() << " returns and "
+  //           << laser_fan.misses.size()
+  //           << " misses in this LaserFan! reported by "
+  //              "KalmanLocalTrajectoryBuilder::AddLaserFan3D()";
 
   transform::Rigid3d pose_prediction;
   kalman_filter::PoseCovariance unused_covariance_prediction;

@@ -125,7 +125,7 @@ bool FastCorrelativeScanMatcher::Match(
   const std::vector<Candidate> lowest_resolution_candidates =
       ComputeLowestResolutionCandidates(discrete_scans);
 
-  LOG(INFO) << "@@@FastCorrelativeScanMatcher::BranchAndBound";
+  //LOG(INFO) << "@@@FastCorrelativeScanMatcher::BranchAndBound";
   const Candidate best_candidate =
       BranchAndBound(discrete_scans, lowest_resolution_candidates,
                      precomputation_grid_stack_->max_depth(), min_score);
