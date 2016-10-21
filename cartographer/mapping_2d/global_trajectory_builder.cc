@@ -32,16 +32,12 @@ const Submaps* GlobalTrajectoryBuilder::submaps() const {
   return local_trajectory_builder_.submaps();
 }
 
-Submaps* GlobalTrajectoryBuilder::submaps() {
-  return local_trajectory_builder_.submaps();
-}
-
 kalman_filter::PoseTracker* GlobalTrajectoryBuilder::pose_tracker() const {
   return local_trajectory_builder_.pose_tracker();
 }
 
-void GlobalTrajectoryBuilder::AddHorizontalLaserFan(
-    const common::Time time, const sensor::LaserFan3D& laser_fan) {
+void GlobalTrajectoryBuilder::AddLaserFan(const common::Time time,
+                                          const sensor::LaserFan& laser_fan) {
   std::unique_ptr<LocalTrajectoryBuilder::InsertionResult> insertion_result =
       local_trajectory_builder_.AddHorizontalLaserFan(time, laser_fan);
   if (insertion_result != nullptr) {

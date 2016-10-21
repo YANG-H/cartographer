@@ -15,17 +15,47 @@
 add_subdirectory("proto")
 add_subdirectory("sparse_pose_graph")
 
-google_library(mapping_global_trajectory_builder_interface
+google_library(mapping_collated_trajectory_builder
+  USES_GLOG
   SRCS
-    global_trajectory_builder_interface.cc
+    collated_trajectory_builder.cc
+  HDRS
+    collated_trajectory_builder.h
+  DEPENDS
+    common_port
+    common_rate_timer
+    common_time
+    kalman_filter_pose_tracker
+    mapping_global_trajectory_builder_interface
+    mapping_submaps
+    mapping_trajectory_builder
+    sensor_collator
+    sensor_data
+)
+
+google_library(mapping_global_trajectory_builder_interface
   HDRS
     global_trajectory_builder_interface.h
   DEPENDS
     common_time
     kalman_filter_pose_tracker
     mapping_submaps
+    mapping_trajectory_builder
     sensor_laser
     sensor_point_cloud
+)
+
+google_library(mapping_imu_tracker
+  USES_EIGEN
+  USES_GLOG
+  SRCS
+    imu_tracker.cc
+  HDRS
+    imu_tracker.h
+  DEPENDS
+    common_math
+    common_time
+    transform_transform
 )
 
 google_library(mapping_map_builder
@@ -38,23 +68,34 @@ google_library(mapping_map_builder
   DEPENDS
     common_lua_parameter_dictionary
     common_make_unique
+    common_port
     common_thread_pool
     mapping_2d_global_trajectory_builder
-    mapping_2d_local_trajectory_builder
     mapping_2d_sparse_pose_graph
-    mapping_2d_submaps
     mapping_3d_global_trajectory_builder
     mapping_3d_local_trajectory_builder_options
-    mapping_3d_proto_local_trajectory_builder_options
     mapping_3d_sparse_pose_graph
-    mapping_global_trajectory_builder_interface
+    mapping_collated_trajectory_builder
     mapping_proto_map_builder_options
     mapping_sparse_pose_graph
+    mapping_submaps
+    mapping_trajectory_builder
     mapping_trajectory_node
+    sensor_collator
     sensor_laser
     sensor_voxel_filter
     transform_rigid_transform
     transform_transform
+)
+
+google_library(mapping_odometry_state_tracker
+  SRCS
+    odometry_state_tracker.cc
+  HDRS
+    odometry_state_tracker.h
+  DEPENDS
+    common_time
+    transform_rigid_transform
 )
 
 google_library(mapping_probability_values
@@ -66,18 +107,6 @@ google_library(mapping_probability_values
   DEPENDS
     common_math
     common_port
-)
-
-google_library(mapping_sensor_collator
-  USES_EIGEN
-  USES_GLOG
-  HDRS
-    sensor_collator.h
-  DEPENDS
-    common_make_unique
-    common_ordered_multi_queue
-    common_time
-    sensor_sensor_packet_period_histogram_builder
 )
 
 google_library(mapping_sparse_pose_graph
@@ -114,6 +143,20 @@ google_library(mapping_submaps
     transform_transform
 )
 
+google_library(mapping_trajectory_builder
+  HDRS
+    trajectory_builder.h
+  DEPENDS
+    common_make_unique
+    common_port
+    common_time
+    kalman_filter_pose_tracker
+    mapping_submaps
+    sensor_data
+    sensor_laser
+    sensor_point_cloud
+)
+
 google_library(mapping_trajectory_connectivity
   USES_GLOG
   SRCS
@@ -128,12 +171,16 @@ google_library(mapping_trajectory_connectivity
 
 google_library(mapping_trajectory_node
   USES_EIGEN
+  SRCS
+    trajectory_node.cc
   HDRS
     trajectory_node.h
   DEPENDS
     common_time
+    proto_trajectory
     sensor_laser
     transform_rigid_transform
+    transform_transform
 )
 
 google_test(mapping_probability_values_test
@@ -141,17 +188,6 @@ google_test(mapping_probability_values_test
     probability_values_test.cc
   DEPENDS
     mapping_probability_values
-)
-
-google_test(mapping_sensor_collator_test
-  SRCS
-    sensor_collator_test.cc
-  DEPENDS
-    common_lua_parameter_dictionary_test_helpers
-    common_make_unique
-    common_time
-    mapping_sensor_collator
-    sensor_proto_sensor
 )
 
 google_test(mapping_sparse_pose_graph_test

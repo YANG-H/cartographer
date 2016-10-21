@@ -186,7 +186,7 @@ class KalmanLocalTrajectoryBuilderTest : public ::testing::Test {
     return first * (to - from) + from;
   }
 
-  sensor::LaserFan3D GenerateLaserFan(const transform::Rigid3d& pose) {
+  sensor::LaserFan GenerateLaserFan(const transform::Rigid3d& pose) {
     // 360 degree rays at 16 angles.
     sensor::PointCloud directions_in_laser_frame;
     for (int r = -8; r != 8; ++r) {
@@ -256,7 +256,7 @@ class KalmanLocalTrajectoryBuilderTest : public ::testing::Test {
     int num_poses = 0;
     for (const TrajectoryNode& node : expected_trajectory) {
       AddLinearOnlyImuObservation(node.time, node.pose);
-      if (local_trajectory_builder_->AddLaserFan3D(
+      if (local_trajectory_builder_->AddLaserFan(
               node.time, GenerateLaserFan(node.pose)) != nullptr) {
         const auto pose_estimate = local_trajectory_builder_->pose_estimate();
         EXPECT_THAT(pose_estimate.pose, transform::IsNearly(node.pose, 1e-1));

@@ -35,21 +35,19 @@ class GlobalTrajectoryBuilder
   GlobalTrajectoryBuilder& operator=(const GlobalTrajectoryBuilder&) = delete;
 
   const Submaps* submaps() const override;
-  Submaps* submaps() override;
   kalman_filter::PoseTracker* pose_tracker() const override;
   const mapping::GlobalTrajectoryBuilderInterface::PoseEstimate& pose_estimate()
       const override;
 
-  void AddHorizontalLaserFan(common::Time time,
-                             const sensor::LaserFan3D& laser_fan) override;
+  // Projects 'laser_fan' to 2D, and therefore should be approximately
+  // horizontal.
+  void AddLaserFan(common::Time time,
+                   const sensor::LaserFan& laser_fan) override;
   void AddImuData(common::Time time, const Eigen::Vector3d& linear_acceleration,
                   const Eigen::Vector3d& angular_velocity) override;
   void AddOdometerPose(
       common::Time time, const transform::Rigid3d& pose,
       const kalman_filter::PoseCovariance& covariance) override;
-  void AddLaserFan3D(common::Time, const sensor::LaserFan3D&) override {
-    LOG(FATAL) << "Not implemented.";
-  };
 
  private:
   const proto::LocalTrajectoryBuilderOptions options_;

@@ -35,10 +35,6 @@ const mapping_3d::Submaps* GlobalTrajectoryBuilder::submaps() const {
   return local_trajectory_builder_->submaps();
 }
 
-mapping_3d::Submaps* GlobalTrajectoryBuilder::submaps() {
-  return local_trajectory_builder_->submaps();
-}
-
 kalman_filter::PoseTracker* GlobalTrajectoryBuilder::pose_tracker() const {
   return local_trajectory_builder_->pose_tracker();
 }
@@ -51,24 +47,10 @@ void GlobalTrajectoryBuilder::AddImuData(
   sparse_pose_graph_->AddImuData(time, linear_acceleration, angular_velocity);
 }
 
-void GlobalTrajectoryBuilder::AddLaserFan3D(
-    const common::Time time, const sensor::LaserFan3D& laser_fan) {
-  
-  static bool first_time = true;
-  if(first_time){
-    std::ofstream ofs("/home/i-yanghao/cartographer_first_scan.xyz");
-    if(ofs){
-      for(auto & p : laser_fan.returns){
-        ofs << p[0] << " " << p[1] << " " << p[2] << std::endl;
-      }
-    }else{
-      LOG(INFO) << "failed to open /home/i-yanghao/cartographer_first_scan.xyz";
-    }
-    first_time = false;
-  }
-
+void GlobalTrajectoryBuilder::AddLaserFan(const common::Time time,
+                                          const sensor::LaserFan& laser_fan) {
   auto insertion_result =
-      local_trajectory_builder_->AddLaserFan3D(time, laser_fan);
+      local_trajectory_builder_->AddLaserFan(time, laser_fan);
 
   if (insertion_result == nullptr) {
     return;
